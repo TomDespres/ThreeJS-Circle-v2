@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+		<link href="https://fonts.googleapis.com/css?family=Anton&display=swap" rel="stylesheet">
+
+	</head>
+	<body>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.3/TweenMax.min.js"></script>
+		<h1>ThreeJS<br>#2 301019<br><span>circle</span></h1>
+
+		<script>
+//------------------------------------SCENE+CAMERA+RENDERER-----------------------
+      var scene = new THREE.Scene();//cree une scene
+      var camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 ); //cree une camera
+			camera.position.z = 15; //position de la camera sur l'axe des z
+
+
+      var renderer = new THREE.WebGLRenderer({antialias:true}); //initialise le rendu dans un canvas
+			renderer.setClearColor("rgb(100,20,20)"); // initialise la couleur du canvas
+      renderer.setSize( window.innerWidth, window.innerHeight ); //initialise la taille du canvas
+
+      document.body.appendChild(renderer.domElement); //ajoute le canvas (=renderer) au DOM
+
+//event permettant de rendre responsive le canvas en modifiant les parametres
+			window.addEventListener("resize", () => {
+				renderer.setSize( window.innerWidth, window.innerHeight ); //rend responsive en reactualisant la taille du canvas
+				camera.aspect = window.innerWidth / window.innerHeight ; //initialise le ratio de la camera
+				camera.updateProjectionMatrix(); //met a jour la camera
+
+			});
+
+//----------------------------------------------OBJECT----------------------------------------------
+
+
+
+
+
+			var geometry = new THREE.DodecahedronGeometry(1,3); // initialisation de la forme
+			var material = new THREE.MeshLambertMaterial({color: 0x141414}); //initialisation du materiaux
+			// var mesh = new THREE.Mesh(geometry,material); //ajoute la forme et le materiaux a l'objet
+			//
+			// mesh.position.set(2,2,-1);//positionne l'objet en une position sur l'axe des X,Y,Z
+
+			var material2 = new THREE.MeshLambertMaterial({color: 0xe5e5e5}); //initialisation du materiaux
+			var mesh4 = new THREE.Mesh(geometry,material2); //ajoute la forme et le materiaux a l'objet
+
+			mesh4.position.set(-3,-2,-1.2);//positionne l'objet en une position sur l'axe des X,Y,Z
+
+			var geometry2 = new THREE.DodecahedronGeometry(2.5,3); // initialisation de la forme
+			var material2 = new THREE.MeshLambertMaterial({color: 0xe5e5e5}); //initialisation du materiaux
+			var mesh2 = new THREE.Mesh(geometry2,material2); //ajoute la forme et le materiaux a l'objet
+
+			mesh2.position.set(0,0,-1);//positionne l'objet en une position sur l'axe des X,Y,Z
+			// mesh2.position.set(2.5,2.4,-1.3);//positionne l'objet en une position sur l'axe des X,Y,Z
+
+
+			var geometry3 = new THREE.DodecahedronGeometry(1,0); // initialisation de la forme
+			var material3 = new THREE.MeshLambertMaterial({color: 0x140000}); //initialisation du materiaux
+			var mesh3 = new THREE.Mesh(geometry3,material3); //ajoute la forme et le materiaux a l'objet
+
+			mesh3.position.set(2,-3,-10);//positionne l'objet en une position sur l'axe des X,Y,Z
+
+			//-----------------------EQUATION DE CERCLE
+			var a = 0;
+			var b = 0;
+			var r = 3;
+			var x;
+			var y;
+			var radian=0;
+
+			var tabMesh=[];
+
+			for (var i = 0; i < 64; i++) {
+				x = a + r*Math.cos(radian);
+				y = b + r*Math.sin(radian);
+
+				var mesh = new THREE.Mesh(geometry,material); //ajoute la forme et le materiaux a l'objet
+				tabMesh.push(mesh);
+				mesh.position.set(x,y,0);
+
+
+
+				mesh.scale.y = 2;
+
+				scene.add(mesh); //ajoute l'objet a la scene
+
+				console.log(x);
+				radian = radian+(Math.PI/32);
+			}
+
+
+			var span = document.querySelector("body");
+			span.addEventListener("mousemove", (event)=>{
+				// //
+				// // for (var i = 0; i < tabMesh.length; i++){
+				var mouseX = event.clientX;
+				var mouseY = event.clientY;
+				// //
+				var moveCamX =  (mouseX - window.innerWidth/2)/15000;
+				var moveCamY =  (mouseY - window.innerHeight/2)/1500;
+
+				// console.log(moveCamY);
+
+
+				// // tabMesh[i].position.x =  ;//rotation de l'objet sur l'axe des X
+				// // tabMesh[i].position.y = ;
+				// //
+				// // };
+
+				camera.position.x += -moveCamX;
+				camera.position.y += moveCamY;
+
+				camera.updateProjectionMatrix(); //met a jour la camera
+			});
+
+//AJOUTER TABLEAUX-------01
+			// scene.add(mesh); //ajoute l'objet a la scene
+			scene.add(mesh2);
+			// scene.add(mesh3);
+			// scene.add(mesh4);
+
+
+
+
+//---------------------------------------------LIGHT-----------------------------------------
+			var light = new THREE.PointLight(0xFFFFFF, 1, 500); //initialisation de la lumiere
+			light.position.set(10,0,25); //initialise sa position
+			scene.add(light);//ajoute la lumiere a la scene
+
+
+//fonction permettant de rendre responsive le canvas --> met a jour le renderer.
+			var render = function(){
+				requestAnimationFrame(render); // ????????? A chaque raffraichissement de la page (60frames ?), relance la fonction.
+
+for (var i = 0; i < tabMesh.length; i++){
+					tabMesh[i].rotation.x += 0.02;//rotation de l'objet sur l'axe des X
+					tabMesh[i].rotation.y += 0.05;
+
+					// tabMesh[i].position.x += -0.005;
+					// tabMesh[i].scale.y += 0.004;
+
+
+				};
+				// mesh3.rotation.x += 0.02;//rotation de l'objet sur l'axe des X
+				// mesh4.rotation.y += 0.05;
+
+
+
+
+
+
+
+
+//cercle
+		// (x - a)² + (y - b)² = r²
+//http://villemin.gerard.free.fr/GeomLAV/Cercle/Equation.htm sur ce site, toute les ref pour :
+//
+// 	il ME FAUT ABSOLUMENT MON BAIL DE TERMINAL
+		// a
+
+	// 10	x = a + R cos
+
+
+
+				renderer.render(scene,camera); // ajoute la scene et la camera au rendu
+			}
+
+			render();
+
+
+		</script>
+	</body>
+</html>
